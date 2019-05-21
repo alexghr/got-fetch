@@ -1,5 +1,21 @@
 {
   "name": "got-fetch",
   "version": "0.1.0",
-  "license": "MIT"
+  "license": "MIT",
+  "main": "./target/lib",
+  "scripts": {
+    "build": "tsc --build ./src/lib",
+    "clean": "tsc --build --clean ./src/lib",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "tslib": "^1.9.3"
+  },
+  "devDependencies": {
+    "@types/node": "^12.0.2",
+    "@typescript-eslint/eslint-plugin": "^1.9.0",
+    "@typescript-eslint/parser": "^1.9.0",
+    "eslint": "^5.16.0",
+    "typescript": "^3.4.5"
+  }
 }

@@ -1,0 +1,7 @@
+{
+  "extends": "../../tsconfig",
+  "compilerOptions": {
+    "outDir": "../../target/lib",
+    "rootDir": "./",
+  },
+}
