@@ -51,4 +51,24 @@ export class GotHeaders implements Headers {
       callbackfn.call(thisArg, this.get(name)!, name, this);
     })
   };
+
+  *entries(): IterableIterator<[string, string]> {
+    for (let key of this.headers.keys()) {
+      yield [key, this.get(key)!];
+    }
+  }
+
+  keys() {
+    return this.headers.keys();
+  }
+
+  *values() {
+    for (let key of this.headers.keys()) {
+      yield this.get(key)!;
+    }
+  }
+
+  [Symbol.iterator]() {
+    return this.entries();
+  }
 }
