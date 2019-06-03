@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "license": "MIT",
   "main": "./target/lib",
+  "types": "./target/lib",
   "scripts": {
     "build": "$npm_execpath run build:lib",
     "build:lib": "tsc --build ./src/lib",
