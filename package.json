@@ -4,18 +4,31 @@
   "license": "MIT",
   "main": "./target/lib",
   "scripts": {
-    "build": "tsc --build ./src/lib",
-    "clean": "tsc --build --clean ./src/lib",
-    "lint": "eslint"
+    "build": "$npm_execpath run build:lib",
+    "build:lib": "tsc --build ./src/lib",
+    "build:test": "tsc --build ./src/test",
+    "build:test:watch": "tsc --build --watch ./src/test",
+    "clean": "tsc --build --clean ./src/lib ./src/test",
+    "postclean": "rm -rf ./target",
+    "lint": "eslint",
+    "pretest": "$npm_execpath run build:test",
+    "test": "jest",
+    "pretest:watch": "$npm_execpath run build:test",
+    "test:watch": "concurrently '$npm_execpath run build:test:watch' 'jest --watchAll'"
   },
   "dependencies": {
     "tslib": "^1.9.3"
   },
   "devDependencies": {
+    "@types/jest": "^24.0.13",
+    "@types/nock": "^10.0.3",
     "@types/node": "^12.0.2",
     "@typescript-eslint/eslint-plugin": "^1.9.0",
     "@typescript-eslint/parser": "^1.9.0",
+    "concurrently": "^4.1.0",
     "eslint": "^5.16.0",
+    "jest": "^24.8.0",
+    "nock": "^10.0.6",
     "typescript": "^3.4.5"
   }
 }

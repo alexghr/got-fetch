@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig",
+  "compilerOptions": {
+    "outDir": "../../target/test",
+    "rootDir": "./",
+    "types": [
+      "node",
+      "jest"
+    ]
+  },
+  "references": [
+    {
+      "path": "../lib"
+    }
+  ]
+}
