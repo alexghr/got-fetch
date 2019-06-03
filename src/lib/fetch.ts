@@ -1,8 +1,9 @@
-import { GotInstance } from 'got';
+import { GotInstance, GotBodyOptions } from 'got';
 import { Readable } from 'stream';
 import { format } from 'util';
 
 import { GotFetchResponse } from './response';
+import { URLSearchParams } from 'url';
 
 export type GotFetch = GlobalFetch['fetch'];
 
@@ -12,11 +13,7 @@ export function createFetch(got: GotInstance): GotFetch {
   return async (input, opts) => {
     const url = typeof input === 'string' ? input : input.url;
     const request: RequestInit = typeof input === 'object' ? input : opts || {};
-    const body = request.body || undefined;
-
-    if (body && typeof body !== 'string' && !Buffer.isBuffer(body) && !(body instanceof Readable)) {
-      throw new TypeError('body type not supported');
-    }
+    const bodyOptions = serializeBody(request.body);
 
     if (request.cache === 'only-if-cached') {
       throw new TypeError(format('cache not supported: %s', request.cache));
@@ -34,9 +31,12 @@ export function createFetch(got: GotInstance): GotFetch {
 
     const response = got(url, {
       method: request.method || 'get',
-      body,
+      body: bodyOptions.body,
       cache: request.cache === 'no-cache' || request.cache === 'no-store' ? undefined : globalCache,
-      headers: request.headers as any,
+      headers: {
+        ...bodyOptions.headers,
+        ...request.headers as any
+      },
       followRedirect,
       throwHttpErrors: false,
     });
@@ -61,5 +61,22 @@ export function createFetch(got: GotInstance): GotFetch {
         url
       });
     });
+  }
+}
+
+function serializeBody(body: BodyInit | null | undefined): Pick<GotBodyOptions<any>, 'body' | 'headers'> {
+  if (!body) {
+    return {};
+  } else if (body instanceof URLSearchParams) {
+    return {
+      body: body.toString(),
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    }
+  } else if (typeof body === 'string' || Buffer.isBuffer(body) || (body instanceof Readable)) {
+    return { body };
+  } else {
+    throw new TypeError('Unsupported body type');
   }
 }
