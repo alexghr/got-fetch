@@ -1,6 +1,6 @@
 {
   "name": "got-fetch",
-  "version": "0.1.0",
+  "version": "0.1.0-alpha",
   "license": "MIT",
   "main": "./target/lib",
   "types": "./target/lib",
@@ -12,6 +12,7 @@
     "clean": "tsc --build --clean ./src/lib ./src/test",
     "postclean": "rm -rf ./target",
     "lint": "eslint",
+    "prepublish": "$npm_execpath run build",
     "pretest": "$npm_execpath run build:test",
     "test": "jest",
     "pretest:watch": "$npm_execpath run build:test",
