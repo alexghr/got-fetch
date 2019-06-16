@@ -57,7 +57,7 @@ export function createFetch(got: GotInstance): GotFetch {
         redirected: r.redirectUrls && r.redirectUrls.length > 0,
         status: r.statusCode,
         statusText: r.statusMessage,
-        type: 'basic',
+        type: 'default',
         url
       });
     });
