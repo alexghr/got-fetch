@@ -1,7 +1,7 @@
 {
-  "extends": "../../tsconfig",
+  "extends": "../../tsconfig.base",
   "compilerOptions": {
-    "outDir": "../../target/test",
+    "outDir": "../../out/test",
     "rootDir": "./",
     "types": [
       "node",

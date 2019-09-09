@@ -10,7 +10,7 @@
     "build:test": "tsc --build ./src/test",
     "build:test:watch": "tsc --build --watch ./src/test",
     "clean": "tsc --build --clean ./src/lib ./src/test",
-    "postclean": "rm -rf ./target",
+    "postclean": "rm -rf ./out",
     "lint": "eslint",
     "prepublish": "$npm_execpath run build",
     "pretest": "$npm_execpath run build:test",
@@ -19,20 +19,21 @@
     "test:watch": "concurrently '$npm_execpath run build:test:watch' 'jest --watchAll'"
   },
   "dependencies": {
-    "tslib": "^1.9.3"
+    "tslib": "^1.10.0"
   },
   "devDependencies": {
-    "@types/got": "^9.4.4",
-    "@types/jest": "^24.0.13",
+    "@types/got": "^9.6.7",
+    "@types/jest": "^24.0.18",
     "@types/nock": "^10.0.3",
-    "@types/node": "^12.0.2",
-    "@typescript-eslint/eslint-plugin": "^1.9.0",
-    "@typescript-eslint/parser": "^1.9.0",
-    "concurrently": "^4.1.0",
-    "eslint": "^5.16.0",
-    "jest": "^24.8.0",
-    "nock": "^10.0.6",
-    "typescript": "^3.4.5"
+    "@types/node": "^12.7.4",
+    "@typescript-eslint/eslint-plugin": "^2.2.0",
+    "@typescript-eslint/parser": "^2.2.0",
+    "concurrently": "^4.1.2",
+    "eslint": "^6.3.0",
+    "got": "^9.6.0",
+    "jest": "^24.9.0",
+    "nock": "^11.3.3",
+    "typescript": "^3.6.2"
   },
   "peerDependencies": {
     "got": "^9.6.0"

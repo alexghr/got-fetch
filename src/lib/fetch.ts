@@ -5,7 +5,7 @@ import { format } from 'util';
 import { GotFetchResponse } from './response';
 import { URLSearchParams } from 'url';
 
-export type GotFetch = GlobalFetch['fetch'];
+export type GotFetch = typeof fetch;
 
 export function createFetch(got: GotInstance): GotFetch {
   const globalCache = new Map();
