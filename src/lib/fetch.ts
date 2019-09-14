@@ -1,43 +1,53 @@
-import { GotInstance, GotBodyOptions } from 'got';
+import { GotInstance, GotBodyOptions, GotBodyFn } from 'got';
 import { Readable } from 'stream';
 import { format } from 'util';
 
 import { GotFetchResponse } from './response';
 import { URLSearchParams } from 'url';
+import { OutgoingHttpHeaders } from 'http';
 
 export type GotFetch = typeof fetch;
 
-export function createFetch(got: GotInstance): GotFetch {
+export function createFetch(got: GotInstance<GotBodyFn<any>>): GotFetch {
   const globalCache = new Map();
 
   return async (input, opts) => {
     const url = typeof input === 'string' ? input : input.url;
     const request: RequestInit = typeof input === 'object' ? input : opts || {};
-    const bodyOptions = serializeBody(request.body);
 
-    if (request.cache === 'only-if-cached') {
-      throw new TypeError(format('cache not supported: %s', request.cache));
-    }
-
-    if (request.redirect === 'manual') {
-      throw new TypeError(format('redirect not supported: %s', request.redirect));
-    }
-
-    if (request.mode === 'no-cors' || request.mode === 'same-origin') {
+    if (request.mode === 'no-cors' || request.mode === 'same-origin' || request.mode === 'navigate') {
       throw new TypeError(format('request.mode not supported: %s', request.mode));
     }
 
-    const followRedirect = request.redirect === 'error' ? false : true;
+    if (request.cache === 'only-if-cached') {
+      throw new TypeError(format('request.cache not supported: %s', request.cache));
+    }
+
+    if (request.redirect === 'error' || request.redirect === 'manual') {
+      throw new TypeError(format('request.redirect not supported: %s', request.redirect));
+    }
+
+    // naive check to make sure headers are a plain object
+    if (request.headers && typeof request.headers !== 'object') {
+      throw new TypeError(format('request.headers must be plain object: %j', request.headers));
+    }
+
+    const method = request.method || 'get';
+    const { body, headers: bodyHeaders } = serializeBody(request.body);
+    const headers: OutgoingHttpHeaders = {
+        ...bodyHeaders,
+        ...(request.headers as object)
+    }
+
+    // use a cache by default
+    const cache = typeof request.cache === 'undefined' || request.cache === 'default' ? globalCache : undefined;
 
     const response = got(url, {
-      method: request.method || 'get',
-      body: bodyOptions.body,
-      cache: request.cache === 'no-cache' || request.cache === 'no-store' ? undefined : globalCache,
-      headers: {
-        ...bodyOptions.headers,
-        ...request.headers as any
-      },
-      followRedirect,
+      method,
+      body,
+      cache,
+      headers,
+      followRedirect: true,
       throwHttpErrors: false,
     });
 
@@ -48,10 +58,6 @@ export function createFetch(got: GotInstance): GotFetch {
     }
 
     return response.then(r => {
-      if (!followRedirect && (r.statusCode && r.statusCode >= 300 && r.statusCode < 400)) {
-        return GotFetchResponse.error();
-      }
-
       return new GotFetchResponse(r.body, {
         headers: r.headers,
         redirected: r.redirectUrls && r.redirectUrls.length > 0,
@@ -68,15 +74,30 @@ function serializeBody(body: BodyInit | null | undefined): Pick<GotBodyOptions<a
   if (!body) {
     return {};
   } else if (body instanceof URLSearchParams) {
+    const serialized = body.toString();
     return {
-      body: body.toString(),
+      body: serialized,
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
+        'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8',
+        'Content-Length': serialized.length
       }
     }
-  } else if (typeof body === 'string' || Buffer.isBuffer(body) || (body instanceof Readable)) {
-    return { body };
+  } else if (typeof body === 'string') {
+    return {
+      body,
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Content-Length': body.length
+      }
+    };
+  } else if (Buffer.isBuffer(body) || (body instanceof Readable)) {
+    return {
+      body,
+      headers: {
+        'Content-Type': 'application/octet-stream'
+      }
+    };
   } else {
-    throw new TypeError('Unsupported body type');
+    throw new TypeError('Unsupported request body');
   }
 }
