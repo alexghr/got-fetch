@@ -3,7 +3,7 @@ import { Readable } from 'stream';
 import { format } from 'util';
 
 import { GotFetchResponse } from './response';
-import { URLSearchParams } from 'url';
+import { URL, URLSearchParams } from 'url';
 import { OutgoingHttpHeaders } from 'http';
 
 export type GotFetch = typeof fetch;
@@ -12,7 +12,7 @@ export function createFetch(got: GotInstance<GotBodyFn<any>>): GotFetch {
   const globalCache = new Map();
 
   return async (input, opts) => {
-    const url = typeof input === 'string' ? input : input.url;
+    const url = new URL(typeof input === 'string' ? input : input.url);
     const request: RequestInit = typeof input === 'object' ? input : opts || {};
 
     if (request.mode === 'no-cors' || request.mode === 'same-origin' || request.mode === 'navigate') {
@@ -42,7 +42,11 @@ export function createFetch(got: GotInstance<GotBodyFn<any>>): GotFetch {
     // use a cache by default
     const cache = typeof request.cache === 'undefined' || request.cache === 'default' ? globalCache : undefined;
 
+    const query = url.search ? Object.fromEntries(url.searchParams.entries()) : undefined;
+    // we parse the URL and pass the query separately
+    // so that Got will merge the URL's query with what Got inherited
     const response = got(url, {
+      query,
       method,
       body,
       cache,
@@ -64,7 +68,7 @@ export function createFetch(got: GotInstance<GotBodyFn<any>>): GotFetch {
         status: r.statusCode,
         statusText: r.statusMessage,
         type: 'default',
-        url
+        url: url.href
       });
     });
   }
