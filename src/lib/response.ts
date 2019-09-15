@@ -70,7 +70,7 @@ export class GotFetchResponse implements Response {
   }
 
   formData(): Promise<FormData> {
-    throw new Error('`formData` not implemented');
+    return this.text().then(body => new URLSearchParams(body));
   }
 
   json(): Promise<any> {
