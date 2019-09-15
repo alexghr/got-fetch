@@ -1,6 +1,6 @@
 {
   "name": "got-fetch",
-  "version": "0.1.0-alpha",
+  "version": "0.1.0-rc.1",
   "license": "MIT",
   "main": "./target/lib",
   "types": "./target/lib",
