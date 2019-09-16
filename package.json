@@ -2,8 +2,8 @@
   "name": "got-fetch",
   "version": "0.1.0-rc.1",
   "license": "MIT",
-  "main": "./target/lib",
-  "types": "./target/lib",
+  "main": "./out/lib",
+  "types": "./out/lib",
   "scripts": {
     "build": "$npm_execpath run build:lib",
     "build:lib": "tsc --build ./src/lib",
