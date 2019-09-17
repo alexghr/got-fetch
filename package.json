@@ -2,6 +2,16 @@
   "name": "got-fetch",
   "version": "1.0.0-rc.1",
   "license": "MIT",
+  "description": "A fetch-compatible interface to the got HTTP client",
+  "homepage": "https://github.com/alexghr/got-fetch#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alexghr/got-fetch.git"
+  },
+  "bugs": {
+    "url": "https://github.com/alexghr/got-fetch/issues"
+  },
+  "author": "Alex Gherghisan <alexghr@users.noreply.github.com> (https://alexghr.me)",
   "main": "./out/lib",
   "types": "./out/lib",
   "scripts": {
