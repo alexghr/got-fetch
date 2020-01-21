@@ -1,14 +1,14 @@
-import { GotInstance, GotBodyOptions, GotBodyFn } from 'got';
+import gotGlobal, { Got, Options as GotOptions } from 'got';
+import { OptionsOfDefaultResponseBody } from 'got/dist/source/create';
 import { Readable } from 'stream';
-import { format } from 'util';
-
-import { GotFetchResponse } from './response';
 import { URL, URLSearchParams } from 'url';
-import { OutgoingHttpHeaders } from 'http';
+import { format } from 'util';
+import { GotFetchResponse } from './response';
+
 
 export type GotFetch = typeof fetch;
 
-export function createFetch(got: GotInstance<GotBodyFn<any>>): GotFetch {
+export function createFetch(got: Got): GotFetch {
   const globalCache = new Map();
 
   return async (input, opts) => {
@@ -32,28 +32,48 @@ export function createFetch(got: GotInstance<GotBodyFn<any>>): GotFetch {
       throw new TypeError(format('request.headers must be plain object: %j', request.headers));
     }
 
-    const method = request.method || 'get';
-    const { body, headers: bodyHeaders } = serializeBody(request.body);
-    const headers: OutgoingHttpHeaders = {
-        ...bodyHeaders,
-        ...(request.headers as object)
-    }
+    // there's a bug in got 10 where it doesn't merge search params
+    // https://github.com/sindresorhus/got/issues/1011
+    const defaultSearchParams = (got.defaults.options as GotOptions).searchParams;
+    appendSearchParams(url.searchParams, defaultSearchParams);
 
-    // use a cache by default
-    const cache = typeof request.cache === 'undefined' || request.cache === 'default' ? globalCache : undefined;
-
-    const query = url.search ? Object.fromEntries(url.searchParams.entries()) : undefined;
-    // we parse the URL and pass the query separately
-    // so that Got will merge the URL's query with what Got inherited
-    const response = got(url, {
-      query,
-      method,
-      body,
-      cache,
-      headers,
+    const mergedOptions = gotGlobal.mergeOptions(got.defaults.options, {
+      url,
       followRedirect: true,
       throwHttpErrors: false,
+      method: (request.method as any) || 'get',
     });
+
+    const gotOpts: OptionsOfDefaultResponseBody = {
+      ...mergedOptions,
+      isStream: false,
+      resolveBodyOnly: false,
+      // we'll do our own response parsing in `GotFetchResponse`
+      responseType: undefined
+    };
+
+    const { body, headers: bodyHeaders } = serializeBody(request.body);
+
+    // only set the `body` key on the options if a body is sent
+    // otherwise got crashes
+    if (body) {
+      gotOpts.body = body;
+    }
+
+    if (bodyHeaders || request.headers) {
+      gotOpts.headers = {
+        ...bodyHeaders,
+        ...(request.headers as object)
+      };
+    }
+
+    // there's a bug in got where it crashes if we send both a body and cache
+    // https://github.com/sindresorhus/got/issues/1021
+    if ((typeof request.cache === 'undefined' || request.cache === 'default') && !gotOpts.body) {
+      gotOpts.cache = globalCache;
+    }
+
+    const response = got(gotOpts);
 
     if (request.signal) {
       const abortHandler = () => response.cancel()
@@ -74,7 +94,7 @@ export function createFetch(got: GotInstance<GotBodyFn<any>>): GotFetch {
   }
 }
 
-function serializeBody(body: BodyInit | null | undefined): Pick<GotBodyOptions<any>, 'body' | 'headers'> {
+function serializeBody(body: BodyInit | null | undefined): Pick<GotOptions, 'body' | 'headers'> {
   if (!body) {
     return {};
   } else if (body instanceof URLSearchParams) {
@@ -83,7 +103,7 @@ function serializeBody(body: BodyInit | null | undefined): Pick<GotBodyOptions<a
       body: serialized,
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8',
-        'Content-Length': serialized.length
+        'Content-Length': String(serialized.length)
       }
     }
   } else if (typeof body === 'string') {
@@ -91,7 +111,7 @@ function serializeBody(body: BodyInit | null | undefined): Pick<GotBodyOptions<a
       body,
       headers: {
         'Content-Type': 'text/plain; charset=utf-8',
-        'Content-Length': body.length
+        'Content-Length': String(body.length)
       }
     };
   } else if (Buffer.isBuffer(body) || (body instanceof Readable)) {
@@ -103,5 +123,29 @@ function serializeBody(body: BodyInit | null | undefined): Pick<GotBodyOptions<a
     };
   } else {
     throw new TypeError('Unsupported request body');
+  }
+}
+
+function appendSearchParams(searchParams: URLSearchParams, extra: GotOptions['searchParams']): void {
+  if (!extra) {
+    return
+  }
+
+  if (typeof extra === 'string') {
+    extra = new URLSearchParams(extra);
+  }
+
+  if (extra instanceof URLSearchParams) {
+    extra.forEach((value, name) => {
+      if (!searchParams.has(name)) {
+        searchParams.set(name, value);
+      }
+    });
+  } else {
+    Object.entries(extra).forEach(([name, value]) => {
+      if (!searchParams.has(name)) {
+        searchParams.set(name, String(value));
+      }
+    });
   }
 }

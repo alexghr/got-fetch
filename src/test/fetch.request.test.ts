@@ -52,7 +52,7 @@ describe('fetch request', () => {
       expect.assertions(1);
       interceptor.intercept('/', 'get').query({ foo: '123', bar: '456' }).reply(200);
 
-      const fetch = createFetch(got.extend({ query: { bar: '456' }}));
+      const fetch = createFetch(got.extend({ searchParams: { bar: '456' } }));
       await assert200(fetch(url('/', { foo: '123' })));
     });
   });
@@ -99,7 +99,7 @@ describe('fetch request', () => {
         .reply(200);
 
       const fetch = createFetch(got.extend({ headers: { 'x-foo': 'foo' } }));
-      await assert200(fetch(url('/'), { headers: { 'x-bar': 'bar' }}));
+      await assert200(fetch(url('/'), { headers: { 'x-bar': 'bar' } }));
     });
   });
 
