@@ -29,20 +29,20 @@
     "test:watch": "concurrently '$npm_execpath run build:test:watch' 'jest --watchAll'"
   },
   "dependencies": {
-    "tslib": "^1.10.0"
+    "tslib": "^1.11.1"
   },
   "devDependencies": {
-    "@types/jest": "^24.0.25",
+    "@types/jest": "^25.1.4",
     "@types/nock": "^11.1.0",
-    "@types/node": "^13.1.4",
-    "@typescript-eslint/eslint-plugin": "^2.14.0",
-    "@typescript-eslint/parser": "^2.14.0",
-    "concurrently": "^5.0.2",
+    "@types/node": "^13.9.5",
+    "@typescript-eslint/eslint-plugin": "^2.25.0",
+    "@typescript-eslint/parser": "^2.25.0",
+    "concurrently": "^5.1.0",
     "eslint": "^6.8.0",
-    "got": "^10.2.1",
-    "jest": "^24.9.0",
-    "nock": "^11.7.1",
-    "typescript": "^3.7.4"
+    "got": "^10.7.0",
+    "jest": "^25.2.3",
+    "nock": "^12.0.3",
+    "typescript": "^3.8.3"
   },
   "peerDependencies": {
     "got": "^10.2.1"
