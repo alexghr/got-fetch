@@ -3,6 +3,10 @@
 A `fetch`-compatible wrapper around [got] for those times when you need to
 fetch stuff over HTTP 😉
 
+Why would you use this instead of got? Sometimes you might need a fetch
+wrapper and this is it (e.g. [Apollo uses `fetch` to query remote schemas]).
+
+
 ## Install
 
 `got` is a peer dependency so you will need to install it alongside `got-fetch`:
@@ -73,3 +77,4 @@ See [LICENSE] for information.
 [RequestRedirect]: https://fetch.spec.whatwg.org/#concept-request-redirect-mode
 [RequestHeaders]: https://fetch.spec.whatwg.org/#ref-for-concept-request-header-list
 [caching algorithm]: https://github.com/sindresorhus/got/tree/f59a5638b93c450dc722848b58b09a44f730a66f#cache-adapters
+[Apollo uses `fetch` to query remote schemas]: https://www.apollographql.com/docs/graphql-tools/remote-schemas/
