@@ -40,6 +40,10 @@ export function createFetch(got: Got): GotFetch {
     const mergedOptions = gotGlobal.mergeOptions(got.defaults.options, {
       url: url.toString(),
       searchParams: undefined,
+      // url needs to be stringified to support UNIX domain sockets, and
+      // searchParams need to be set to undefined to prevent potential issues in
+      // Got. For more info see https://github.com/alexghr/got-fetch/pull/8
+
       followRedirect: true,
       throwHttpErrors: false,
       method: (request.method as any) || 'get',
