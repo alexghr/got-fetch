@@ -39,6 +39,7 @@ export function createFetch(got: Got): GotFetch {
 
     const mergedOptions = gotGlobal.mergeOptions(got.defaults.options, {
       url: url.toString(),
+      searchParams: undefined,
       followRedirect: true,
       throwHttpErrors: false,
       method: (request.method as any) || 'get',
