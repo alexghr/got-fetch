@@ -38,7 +38,7 @@ export function createFetch(got: Got): GotFetch {
     appendSearchParams(url.searchParams, defaultSearchParams);
 
     const mergedOptions = gotGlobal.mergeOptions(got.defaults.options, {
-      url,
+      url: url.toString(),
       followRedirect: true,
       throwHttpErrors: false,
       method: (request.method as any) || 'get',
