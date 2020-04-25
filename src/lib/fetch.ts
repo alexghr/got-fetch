@@ -1,5 +1,4 @@
-import gotGlobal, { Got, Options as GotOptions } from 'got';
-import { OptionsOfDefaultResponseBody } from 'got/dist/source/create';
+import { CancelableRequest, Got, Options as GotOptions, Response } from 'got';
 import { Readable } from 'stream';
 import { URL, URLSearchParams } from 'url';
 import { format } from 'util';
@@ -32,25 +31,22 @@ export function createFetch(got: Got): GotFetch {
       throw new TypeError(format('request.headers must be plain object: %j', request.headers));
     }
 
-    // there's a bug in got 10 where it doesn't merge search params
-    // https://github.com/sindresorhus/got/issues/1011
-    const defaultSearchParams = (got.defaults.options as GotOptions).searchParams;
-    appendSearchParams(url.searchParams, defaultSearchParams);
+    // got does not merge base searchParams with the url's searchParams
+    // but it does merge searchParams options
+    // so we clone the url's searchParams
+    // we also clear the url's search to work around this bug
+    // https://github.com/sindresorhus/got/issues/1188
+    const searchParams = new URLSearchParams(url.searchParams);
+    url.search = '';
 
-    const mergedOptions = gotGlobal.mergeOptions(got.defaults.options, {
-      url: url.toString(),
-      searchParams: undefined,
+    const gotOpts: GotOptions = {
       // url needs to be stringified to support UNIX domain sockets, and
-      // searchParams need to be set to undefined to prevent potential issues in
-      // Got. For more info see https://github.com/alexghr/got-fetch/pull/8
-
+      // For more info see https://github.com/alexghr/got-fetch/pull/8
+      url: url.toString(),
+      searchParams,
       followRedirect: true,
       throwHttpErrors: false,
       method: (request.method as any) || 'get',
-    });
-
-    const gotOpts: OptionsOfDefaultResponseBody = {
-      ...mergedOptions,
       isStream: false,
       resolveBodyOnly: false,
       // we'll do our own response parsing in `GotFetchResponse`
@@ -78,7 +74,7 @@ export function createFetch(got: Got): GotFetch {
       gotOpts.cache = globalCache;
     }
 
-    const response = got(gotOpts);
+    const response = got(gotOpts) as CancelableRequest<Response<string | Buffer>>;
 
     if (request.signal) {
       const abortHandler = () => response.cancel()
