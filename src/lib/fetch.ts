@@ -104,7 +104,7 @@ function serializeBody(body: BodyInit | null | undefined): Pick<GotOptions, 'bod
       body: serialized,
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8',
-        'Content-Length': String(serialized.length)
+        'Content-Length': String(Buffer.byteLength(serialized, 'utf8'))
       }
     }
   } else if (typeof body === 'string') {
