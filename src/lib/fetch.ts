@@ -112,7 +112,7 @@ function serializeBody(body: BodyInit | null | undefined): Pick<GotOptions, 'bod
       body,
       headers: {
         'Content-Type': 'text/plain; charset=utf-8',
-        'Content-Length': String(body.length)
+        'Content-Length': String(Buffer.byteLength(body, 'utf8')),
       }
     };
   } else if (Buffer.isBuffer(body) || (body instanceof Readable)) {
