@@ -145,5 +145,34 @@ describe('fetch request', () => {
         method: 'post',
       }));
     });
+
+    it('sends the correct content-length on a multi-byte character for string payloads', async () => {
+      expect.assertions(1);
+      interceptor
+        .intercept('/', 'post')
+        .matchHeader('Content-Length', '4')
+        .reply(200);
+
+      const fetch = createFetch(got);
+      await assert200(fetch(url('/'), {
+        method: 'post',
+        body: "𐍈"
+      }));
+    });
+
+    it('sends the correct content-length on a multi-byte character for url search param payloads', async () => {
+      expect.assertions(1);
+      interceptor
+        .intercept('/', 'post')
+        .matchHeader('Content-Length', '16')
+        .reply(200);
+
+      const fetch = createFetch(got);
+      await assert200(fetch(url('/'), {
+        method: 'post',
+        body: new URLSearchParams({ foo: "𐍈"})
+      }));
+
+    });
   });
 });
