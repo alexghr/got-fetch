@@ -62,7 +62,7 @@ export class GotFetchResponse implements Response {
   }
 
   arrayBuffer(): Promise<ArrayBuffer> {
-    throw new Error();
+    throw new Error("`arrayBuffer` not implemented");
   }
 
   blob(): Promise<Blob> {
