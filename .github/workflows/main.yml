@@ -28,6 +28,8 @@ jobs:
     needs:
       - test
 
+    environment: npm
+
     steps:
     - uses: actions/checkout@v2
     - name: Use Node.js 16
@@ -38,3 +40,5 @@ jobs:
     - run: yarn install
     - run: yarn build
     - run: yarn release
+      env:
+        NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
