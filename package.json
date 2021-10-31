@@ -6,7 +6,7 @@
   "homepage": "https://github.com/alexghr/got-fetch#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/alexghr/got-fetch.git"
+    "url": "ssh://git@github.com/alexghr/got-fetch.git"
   },
   "bugs": {
     "url": "https://github.com/alexghr/got-fetch/issues"
@@ -26,12 +26,18 @@
     "pretest": "$npm_execpath run build:test",
     "test": "jest",
     "pretest:watch": "$npm_execpath run build:test",
-    "test:watch": "concurrently '$npm_execpath run build:test:watch' 'jest --watchAll'"
+    "test:watch": "concurrently '$npm_execpath run build:test:watch' 'jest --watchAll'",
+    "release": "semantic-release"
   },
   "dependencies": {
     "tslib": "^1.11.1"
   },
   "devDependencies": {
+    "@semantic-release/changelog": "^6.0.1",
+    "@semantic-release/commit-analyzer": "^9.0.1",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/npm": "^8.0.2",
+    "@semantic-release/release-notes-generator": "^10.0.2",
     "@types/jest": "^25.2.1",
     "@types/nock": "^11.1.0",
     "@types/node": "^13.13.2",
@@ -42,6 +48,7 @@
     "got": "^11.0.2",
     "jest": "^25.4.0",
     "nock": "^12.0.3",
+    "semantic-release": "^18.0.0",
     "typescript": "^3.8.3"
   },
   "peerDependencies": {
