@@ -27,7 +27,8 @@
     "test": "jest",
     "pretest:watch": "$npm_execpath run build:test",
     "test:watch": "concurrently '$npm_execpath run build:test:watch' 'jest --watchAll'",
-    "release": "semantic-release"
+    "release": "semantic-release",
+    "cz": "cz"
   },
   "dependencies": {
     "tslib": "^1.11.1"
@@ -44,6 +45,7 @@
     "@typescript-eslint/eslint-plugin": "^2.29.0",
     "@typescript-eslint/parser": "^2.29.0",
     "concurrently": "^5.2.0",
+    "cz-conventional-changelog": "3.3.0",
     "eslint": "^6.8.0",
     "got": "^11.0.2",
     "jest": "^25.4.0",
