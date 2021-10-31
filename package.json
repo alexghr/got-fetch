@@ -6,7 +6,7 @@
   "homepage": "https://github.com/alexghr/got-fetch#readme",
   "repository": {
     "type": "git",
-    "url": "ssh://git@github.com/alexghr/got-fetch.git"
+    "url": "https://github.com/alexghr/got-fetch.git"
   },
   "bugs": {
     "url": "https://github.com/alexghr/got-fetch/issues"
