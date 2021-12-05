@@ -41,7 +41,7 @@
     "@semantic-release/release-notes-generator": "^10.0.2",
     "@types/jest": "^25.2.1",
     "@types/nock": "^11.1.0",
-    "@types/node": "^13.13.2",
+    "@types/node": "^16.11.11",
     "@typescript-eslint/eslint-plugin": "^2.29.0",
     "@typescript-eslint/parser": "^2.29.0",
     "concurrently": "^6.4.0",
