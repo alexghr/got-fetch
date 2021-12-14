@@ -88,8 +88,14 @@ export function createFetch(got: Got): GotFetch {
         redirected: r.redirectUrls && r.redirectUrls.length > 0,
         status: r.statusCode,
         statusText: r.statusMessage,
-        type: 'default',
-        url: url.href
+        type: "default",
+        // according to spec this should be the final URL, after all redirects
+        url:
+          r.redirectUrls.length > 0
+              // using Array.prototype.at would've been nice but it's not
+              // supported by anything below Node 16.8
+            ? r.redirectUrls[r.redirectUrls.length - 1]
+            : url.href,
       });
     });
   }
