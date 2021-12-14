@@ -25,6 +25,7 @@ export class GotFetchResponse implements Response {
   readonly statusText: string;
   readonly url: string;
   readonly type: ResponseType;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   readonly body: any | null;
 
   constructor(
@@ -73,6 +74,7 @@ export class GotFetchResponse implements Response {
     return this.text().then(body => new URLSearchParams(body));
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   json(): Promise<any> {
     return this.text().then(JSON.parse);
   }

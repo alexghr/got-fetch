@@ -1,4 +1,4 @@
-import { CancelableRequest, Got, Options as GotOptions, Response } from 'got';
+import { CancelableRequest, Got, Method, Options as GotOptions, Response } from 'got';
 import { Readable } from 'stream';
 import { URL, URLSearchParams } from 'url';
 import { format } from 'util';
@@ -46,7 +46,7 @@ export function createFetch(got: Got): GotFetch {
       searchParams,
       followRedirect: true,
       throwHttpErrors: false,
-      method: (request.method as any) || 'get',
+      method: (request.method as Method) || 'get',
       isStream: false,
       resolveBodyOnly: false,
       // we'll do our own response parsing in `GotFetchResponse`
@@ -130,29 +130,5 @@ function serializeBody(body: BodyInit | null | undefined): Pick<GotOptions, 'bod
     };
   } else {
     throw new TypeError('Unsupported request body');
-  }
-}
-
-function appendSearchParams(searchParams: URLSearchParams, extra: GotOptions['searchParams']): void {
-  if (!extra) {
-    return
-  }
-
-  if (typeof extra === 'string') {
-    extra = new URLSearchParams(extra);
-  }
-
-  if (extra instanceof URLSearchParams) {
-    extra.forEach((value, name) => {
-      if (!searchParams.has(name)) {
-        searchParams.set(name, value);
-      }
-    });
-  } else {
-    Object.entries(extra).forEach(([name, value]) => {
-      if (!searchParams.has(name)) {
-        searchParams.set(name, String(value));
-      }
-    });
   }
 }
