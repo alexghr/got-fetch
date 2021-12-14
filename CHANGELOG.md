@@ -1,3 +1,10 @@
+## [4.0.2](https://github.com/alexghr/got-fetch/compare/v4.0.1...v4.0.2) (2021-12-14)
+
+
+### Bug Fixes
+
+* **response:** returns final URL after all redirects ([#55](https://github.com/alexghr/got-fetch/issues/55)) ([0e7520d](https://github.com/alexghr/got-fetch/commit/0e7520dd5cb2a19524f78012f7670713b6085149)), closes [#54](https://github.com/alexghr/got-fetch/issues/54) [#49](https://github.com/alexghr/got-fetch/issues/49)
+
 ## [4.0.1](https://github.com/alexghr/got-fetch/compare/v4.0.0...v4.0.1) (2021-12-07)
 
 

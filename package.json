@@ -1,6 +1,6 @@
 {
   "name": "got-fetch",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "license": "MIT",
   "description": "A fetch-compatible interface to the got HTTP client",
   "homepage": "https://github.com/alexghr/got-fetch#readme",
