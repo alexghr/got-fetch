@@ -36,4 +36,105 @@ describe('fetch response', () => {
     const response = await fetch(url('/'), { method: 'post' });
     expect(response.headers.get('content-type')).toEqual('text/plain');
   });
+
+  type UrlTest = {
+    interceptions: ReadonlyArray<{
+      request: [string, string];
+      response: [number, string, Record<string, string>];
+    }>;
+    testUrl: string;
+    testMethod: string;
+    expectedUrl: string;
+  };
+
+  it.each<UrlTest>([
+    // standard 200
+    {
+      interceptions: [
+        {
+          request: ["/", "get"],
+          response: [200, "", {}],
+        },
+      ],
+      testUrl: url("/"),
+      testMethod: "get",
+      expectedUrl: url("/"),
+    },
+    // 301 get redirect
+    {
+      interceptions: [
+        {
+          request: ["/", "get"],
+          response: [301, "", { location: "/redirected" }],
+        },
+        {
+          request: ["/redirected", "get"],
+          response: [200, "", {}],
+        },
+      ],
+      testUrl: url("/"),
+      testMethod: "get",
+      expectedUrl: url("/redirected"),
+    },
+    // 302 get redirect
+    {
+      interceptions: [
+        {
+          request: ["/", "get"],
+          response: [302, "", { location: "/redirected" }],
+        },
+        {
+          request: ["/redirected", "get"],
+          response: [200, "", {}],
+        },
+      ],
+      testUrl: url("/"),
+      testMethod: "get",
+      expectedUrl: url("/redirected"),
+    },
+    // 302 post redirect
+    {
+      interceptions: [
+        {
+          request: ["/", "post"],
+          response: [302, "", { location: "/redirected" }],
+        },
+        {
+          request: ["/redirected", "post"],
+          response: [200, "", {}],
+        },
+      ],
+      testUrl: url("/"),
+      testMethod: "post",
+      expectedUrl: url("/redirected"),
+    },
+    // 303 redirect mixed methods
+    {
+      interceptions: [
+        {
+          request: ["/", "post"],
+          response: [303, "", { location: "/redirected" }],
+        },
+        {
+          request: ["/redirected", "get"],
+          response: [200, "", {}],
+        },
+      ],
+      testUrl: url("/"),
+      testMethod: "post",
+      expectedUrl: url("/redirected"),
+    },
+  ])(
+    "returns final url",
+    async ({ interceptions, testUrl, testMethod, expectedUrl }) => {
+      expect.assertions(1);
+      interceptions.forEach(({ request: [url, method], response: [statusCode, body, headers] }) => {
+        interceptor.intercept(url, method).reply(statusCode, body, headers);
+      })
+
+      const fetch = createFetch(got);
+      const response = await fetch(testUrl, { method: testMethod });
+      expect(response.url).toEqual(expectedUrl);
+    }
+  );
 });
