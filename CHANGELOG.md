@@ -1,3 +1,10 @@
+## [4.0.3](https://github.com/alexghr/got-fetch/compare/v4.0.2...v4.0.3) (2021-12-14)
+
+
+### Bug Fixes
+
+* lint ([#58](https://github.com/alexghr/got-fetch/issues/58)) ([816326f](https://github.com/alexghr/got-fetch/commit/816326f5d0c53be64c18ad2cbd9abfc834cf078d))
+
 ## [4.0.2](https://github.com/alexghr/got-fetch/compare/v4.0.1...v4.0.2) (2021-12-14)
 
 
