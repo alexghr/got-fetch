@@ -1,4 +1,5 @@
 {
+  "root": true,
   "env": {
     "node": true
   },
@@ -6,5 +7,8 @@
   "parserOptions": {
   },
   "plugins": ["@typescript-eslint"],
-  "extends": ["plugin:@typescript-eslint/recommended"]
+  "extends": ["plugin:@typescript-eslint/recommended"],
+  "rules": {
+    "@typescript-eslint/no-non-null-assertion": "off"
+  }
 }

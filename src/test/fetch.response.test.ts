@@ -1,7 +1,7 @@
 import got from 'got';
 
 import { createFetch } from '../lib/fetch';
-import { Interceptor, intercept, assert200, url } from './util';
+import { Interceptor, intercept, url } from './util';
 
 describe('fetch response', () => {
   let interceptor: Interceptor;
