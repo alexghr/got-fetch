@@ -1,6 +1,7 @@
 {
   "name": "got-fetch",
   "version": "4.0.3",
+  "type": "module",
   "license": "MIT",
   "description": "A fetch-compatible interface to the got HTTP client",
   "homepage": "https://github.com/alexghr/got-fetch#readme",
@@ -14,6 +15,9 @@
   "author": "Alex Gherghisan <alexghr@users.noreply.github.com> (https://alexghr.me)",
   "main": "./out/lib",
   "types": "./out/lib",
+  "exports": {
+    ".": "./out/lib/index.js"
+  },
   "scripts": {
     "build": "$npm_execpath run build:lib",
     "build:lib": "tsc --build ./src/lib",
@@ -47,14 +51,14 @@
     "concurrently": "^6.4.0",
     "cz-conventional-changelog": "3.3.0",
     "eslint": "^8.4.1",
-    "got": "^11.0.2",
+    "got": "^12.0.0",
     "jest": "^27.4.3",
     "nock": "^13.2.1",
     "semantic-release": "^18.0.0",
     "typescript": "^4.5.4"
   },
   "peerDependencies": {
-    "got": "^11.0.0"
+    "got": "^12.0.0"
   },
   "engines": {
     "node": ">=14.0.0"

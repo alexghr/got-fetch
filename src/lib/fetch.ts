@@ -1,4 +1,4 @@
-import { CancelableRequest, Got, Method, Options as GotOptions, Response } from 'got';
+import { CancelableRequest, Got, Method, OptionsOfUnknownResponseBody, Response } from 'got';
 import { Readable } from 'stream';
 import { URL, URLSearchParams } from 'url';
 import { format } from 'util';
@@ -39,7 +39,7 @@ export function createFetch(got: Got): GotFetch {
     const searchParams = new URLSearchParams(url.searchParams);
     url.search = '';
 
-    const gotOpts: GotOptions = {
+    const gotOpts: OptionsOfUnknownResponseBody = {
       // url needs to be stringified to support UNIX domain sockets, and
       // For more info see https://github.com/alexghr/got-fetch/pull/8
       url: url.toString(),
@@ -94,14 +94,14 @@ export function createFetch(got: Got): GotFetch {
           r.redirectUrls.length > 0
               // using Array.prototype.at would've been nice but it's not
               // supported by anything below Node 16.8
-            ? r.redirectUrls[r.redirectUrls.length - 1]
+            ? r.redirectUrls[r.redirectUrls.length - 1].href
             : url.href,
       });
     });
   }
 }
 
-function serializeBody(body: BodyInit | null | undefined): Pick<GotOptions, 'body' | 'headers'> {
+function serializeBody(body: BodyInit | null | undefined): Pick<OptionsOfUnknownResponseBody, 'body' | 'headers'> {
   if (!body) {
     return {};
   } else if (body instanceof URLSearchParams) {
