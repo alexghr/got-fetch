@@ -2,7 +2,7 @@ import { CancelableRequest, Got, Method, OptionsOfUnknownResponseBody, Response 
 import { Readable } from 'stream';
 import { URL, URLSearchParams } from 'url';
 import { format } from 'util';
-import { GotFetchResponse } from './response';
+import { GotFetchResponse } from './response.js';
 
 
 export type GotFetch = typeof fetch;
