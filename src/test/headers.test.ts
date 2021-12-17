@@ -1,4 +1,5 @@
-import { GotHeaders } from '../lib/headers';
+import { jest } from "@jest/globals";
+import { GotHeaders } from '../lib/headers.js';
 
 describe('GotHeaders', () => {
   describe('constructor', () => {
