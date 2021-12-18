@@ -1,6 +1,6 @@
 {
   "name": "got-fetch",
-  "version": "4.0.3",
+  "version": "5.0.0-next.1",
   "type": "module",
   "license": "MIT",
   "description": "A fetch-compatible interface to the got HTTP client",
@@ -34,8 +34,7 @@
     "release": "semantic-release",
     "cz": "cz"
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.1",
     "@semantic-release/commit-analyzer": "^9.0.1",
