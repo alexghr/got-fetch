@@ -2,7 +2,9 @@ name: Release workflow
 
 on:
   push:
-    branches: [main]
+    branches:
+      - 'main'
+      - 'next'
 
 jobs:
   test:
