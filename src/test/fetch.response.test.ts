@@ -1,7 +1,6 @@
 import got from 'got';
-
-import { createFetch } from '../lib/fetch';
-import { Interceptor, intercept, url } from './util';
+import { createFetch } from '../lib/fetch.js';
+import { Interceptor, intercept, url } from './util.js';
 
 describe('fetch response', () => {
   let interceptor: Interceptor;
