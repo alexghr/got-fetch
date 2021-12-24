@@ -1,3 +1,15 @@
+# [5.0.0-next.1](https://github.com/alexghr/got-fetch/compare/v4.0.3...v5.0.0-next.1) (2021-12-18)
+
+
+### Features
+
+* support got@12 ([#61](https://github.com/alexghr/got-fetch/issues/61)) ([83257f1](https://github.com/alexghr/got-fetch/commit/83257f1ae463f369d49e41b8a6c8ffac6928f2d5))
+
+
+### BREAKING CHANGES
+
+* no longer supports got@11
+
 ## [4.0.3](https://github.com/alexghr/got-fetch/compare/v4.0.2...v4.0.3) (2021-12-14)
 
 

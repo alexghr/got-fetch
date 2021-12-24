@@ -1,8 +1,8 @@
 import got from 'got';
 import { URLSearchParams } from 'url';
 
-import { createFetch } from '../lib/fetch';
-import { Interceptor, intercept, assert200, url } from './util';
+import { createFetch } from '../lib/fetch.js';
+import { Interceptor, intercept, assert200, url } from './util.js';
 
 describe('fetch request', () => {
   let interceptor: Interceptor;

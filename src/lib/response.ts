@@ -7,7 +7,7 @@
 import { IncomingHttpHeaders } from 'http2';
 import { format } from 'util';
 
-import { GotHeaders } from './headers';
+import { GotHeaders } from './headers.js';
 
 type ResponseInit = {
   status?: number;

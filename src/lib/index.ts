@@ -1,5 +1,5 @@
-import { createFetch } from './fetch';
-import fetch from './global-fetch';
+import { createFetch } from './fetch.js';
+import fetch from './global-fetch.js';
 
 export { createFetch, fetch };
 export default fetch;

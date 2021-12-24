@@ -1,4 +1,4 @@
-import { GotFetchResponse } from '../lib/response';
+import { GotFetchResponse } from '../lib/response.js';
 
 describe('GotFetchResponse', () => {
   it.each<[string | Buffer, any]>([
