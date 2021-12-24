@@ -1,3 +1,26 @@
+# [5.0.0](https://github.com/alexghr/got-fetch/compare/v4.0.3...v5.0.0) (2021-12-24)
+
+
+### Bug Fixes
+
+* nudge semantic release ([59d8e37](https://github.com/alexghr/got-fetch/commit/59d8e373e5cef661fc7c6084c6e28f72eae7fcd2))
+
+
+### chore
+
+* promote v5.0.0-next ([#66](https://github.com/alexghr/got-fetch/issues/66)) ([417e776](https://github.com/alexghr/got-fetch/commit/417e77618b05c64bd00fe23da24f74943b0a5b47)), closes [#61](https://github.com/alexghr/got-fetch/issues/61) [#61](https://github.com/alexghr/got-fetch/issues/61)
+
+
+### BREAKING CHANGES
+
+* no longer supports got@11
+
+* chore(release): 5.0.0-next.1 [skip ci]
+
+# [5.0.0-next.1](https://github.com/alexghr/got-fetch/compare/v4.0.3...v5.0.0-next.1) (2021-12-18)
+
+### Features
+
 # [5.0.0-next.1](https://github.com/alexghr/got-fetch/compare/v4.0.3...v5.0.0-next.1) (2021-12-18)
 
 
