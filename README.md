@@ -6,41 +6,43 @@ fetch stuff over HTTP 😉
 Why would you use this instead of got? Sometimes you might need a fetch
 wrapper and this is it (e.g. [Apollo uses `fetch` to query remote schemas]).
 
-
 ## Install
+
+Support table:
+
+|`got-fetch` version|works with `got` version|Notes                                |
+|-------------------|------------------------|-------------------------------------|
+|^5.0.0             |^12.0.0                 |ESM package. You have to use `import`|
+|^4.0.0             |^11.0.0                 |CJS package. You can use `require`   |
 
 `got` is a peer dependency so you will need to install it alongside `got-fetch`:
 
 ```sh
-$ npm install --save got got-fetch
+npm install --save got got-fetch
 ```
 
-If you use Typescript then you will also need `@types/got` if you want your
-project to build:
-
-```sh
-$ npm install --save-dev @types/got
-```
+For CommonJS support, we maintain [v4 of this package](https://github.com/alexghr/got-fetch/tree/4.x).
 
 ## Usage
 
-The module exports a global instance ready to fetch resources:
+Use the default export:
 
 ```js
-const { fetch } = require('got-fetch');
+import fetch from 'got-fetch';
 
-fetch('https://example.com').then(resp => {
-  console.log(resp.status); // should be 200
-  resp.text().then(body => console.log(body)); // should be some HTML code
-});
+// in ESM we can use top-level await
+const resp = await fetch('https://example.com');
+
+console.log(resp.status); // 200
+console.log(await resp.text()); // a HTML document
 ```
 
 The module also exports a function which allows you to use your own custom
 `got` instance:
 
 ```js
-const got = require('got');
-const { createFetch } = require('got-fetch');
+import got from 'got';
+import { createFetch } from 'got-fetch';
 
 const myGot = got.extend({
   headers: {
@@ -61,6 +63,8 @@ around a Node-based HTTP client. Not all `fetch` features are supported:
 - ❌ [RequestMode] `no-cors`, `same-origin`, `navigate`
 - ❌ [RequestCache] `only-if-cached`
 - ❌ [RequestRedirect] `error`, `manual`
+- ❌ response body streaming. See https://github.com/alexghr/got-fetch/issues/25
+- ❗ ESM vs CJS packages. See https://github.com/alexghr/got-fetch/issues/70
 - ❗ [RequestHeaders] must be a plain object
 - ❗ [RequestCache] if unset (or `default`) will use got's [caching algorithm]
   (any other value will disable caching)
