@@ -1,3 +1,10 @@
+## [5.0.1](https://github.com/alexghr/got-fetch/compare/v5.0.0...v5.0.1) (2021-12-28)
+
+
+### Bug Fixes
+
+* update documentation ([#71](https://github.com/alexghr/got-fetch/issues/71)) ([50a4fff](https://github.com/alexghr/got-fetch/commit/50a4fff84c8089faf859693c3d7cefc99d4fed7c)), closes [#70](https://github.com/alexghr/got-fetch/issues/70)
+
 # [5.0.0](https://github.com/alexghr/got-fetch/compare/v4.0.3...v5.0.0) (2021-12-24)
 
 
