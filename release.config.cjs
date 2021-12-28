@@ -1,6 +1,7 @@
 const { repository } = require("./package.json");
 module.exports = {
   branches: [
+    "+([0-9])?(.{+([0-9]),x}).x",
     { name: "main" },
     { name: "next", channel: "next", prerelease: "next" },
   ],

@@ -5,6 +5,7 @@ on:
     branches:
       - 'main'
       - 'next'
+      - '4.x'
 
 jobs:
   test:
