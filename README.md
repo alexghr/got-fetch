@@ -1,5 +1,11 @@
 # got-fetch
 
+[![NPM](https://img.shields.io/npm/l/got-fetch)](https://github.com/alexghr/got-fetch/blob/main/LICENSE)
+[![Release workflow](https://github.com/alexghr/got-fetch/actions/workflows/release.yml/badge.svg)](https://github.com/alexghr/got-fetch/actions/workflows/release.yml)
+[![semantic-release: angular](https://img.shields.io/badge/semantic--release-angular-e10079?logo=semantic-release)](https://github.com/semantic-release/semantic-release)
+[![npm](https://img.shields.io/npm/v/got-fetch)](https://www.npmjs.com/package/got-fetch)
+[![npm](https://img.shields.io/npm/dm/got-fetch)](https://npmcharts.com/compare/got-fetch?interval=30&log=false)
+
 A `fetch`-compatible wrapper around [got] for those times when you need to
 fetch stuff over HTTP 😉
 
