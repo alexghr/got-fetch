@@ -53,7 +53,7 @@ export function createFetch(got: Got): GotFetch {
       responseType: undefined
     };
 
-    const { body, headers: bodyHeaders } = serializeBody(request.body);
+    const { body, headers: bodyHeaders = {} } = serializeBody(request.body);
 
     // only set the `body` key on the options if a body is sent
     // otherwise got crashes
@@ -61,12 +61,24 @@ export function createFetch(got: Got): GotFetch {
       gotOpts.body = body;
     }
 
-    if (bodyHeaders || request.headers) {
-      gotOpts.headers = {
-        ...bodyHeaders,
-        ...(request.headers as object)
-      };
+    const headers: GotOptions["headers"] = { ...bodyHeaders };
+    if (request.headers) {
+      if (Array.isArray(request.headers)) {
+        request.headers.forEach(([header, value]) => {
+          headers[header.toLowerCase()] = value;
+        });
+      } else if (typeof request.headers?.forEach === "function") {
+        request.headers.forEach((value, header) => {
+          headers[header.toLowerCase()] = value;
+        });
+      } else {
+        Object.keys(request.headers).forEach((header) => {
+          headers[header.toLowerCase()] = (request.headers as Record<string, string>)[header];
+        });
+      }
     }
+
+    gotOpts.headers = headers;
 
     // there's a bug in got where it crashes if we send both a body and cache
     // https://github.com/sindresorhus/got/issues/1021
