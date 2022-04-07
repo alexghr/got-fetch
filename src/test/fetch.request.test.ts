@@ -174,5 +174,29 @@ describe('fetch request', () => {
       }));
 
     });
+
+    it.only("sends own content-type header", async () => {
+      expect.assertions(1);
+
+      // as set by the client
+      interceptor
+        .post("/")
+        .matchHeader("content-type", "text/plain; charset=utf-8")
+        .reply(400);
+
+      interceptor
+        .post("/")
+        .matchHeader("Content-Type", "application/json")
+        .reply(200);
+
+      const fetch = createFetch(got);
+      await assert200(
+        fetch(url("/"), {
+          method: "post",
+          body: JSON.stringify({ foo: "bar" }),
+          headers: { "content-Type": "application/json" },
+        })
+      );
+    });
   });
 });
