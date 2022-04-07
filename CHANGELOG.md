@@ -1,3 +1,10 @@
+## [4.0.4](https://github.com/alexghr/got-fetch/compare/v4.0.3...v4.0.4) (2022-04-07)
+
+
+### Bug Fixes
+
+* normalise request headers before sending ([#133](https://github.com/alexghr/got-fetch/issues/133)) ([ff5f1e6](https://github.com/alexghr/got-fetch/commit/ff5f1e626484526a018d113b8bee7d76ee5d9892)), closes [#15](https://github.com/alexghr/got-fetch/issues/15)
+
 ## [4.0.3](https://github.com/alexghr/got-fetch/compare/v4.0.2...v4.0.3) (2021-12-14)
 
 
