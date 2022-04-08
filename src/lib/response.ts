@@ -5,6 +5,7 @@
  */
 
 import { IncomingHttpHeaders } from 'http2';
+import {Readable, Stream} from 'stream';
 import { format } from 'util';
 
 import { GotHeaders } from './headers.js';
@@ -79,7 +80,7 @@ export class GotFetchResponse implements Response {
     return this.text().then(JSON.parse);
   }
 
-  text(): Promise<string> {
+  async text(): Promise<string> {
     if (this.body === null) {
       return Promise.resolve('');
     }
@@ -89,7 +90,12 @@ export class GotFetchResponse implements Response {
     } else if (Buffer.isBuffer(this.body)) {
       return Promise.resolve(this.body.toString('utf8'));
     } else {
-      return Promise.reject(new TypeError('Unsupported body type'));
+      let body = '';
+      for await (const chunk of this.body) {
+        body += chunk;
+      }
+
+      return body;
     }
   }
 

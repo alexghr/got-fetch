@@ -12,7 +12,7 @@ describe('fetch request', () => {
   });
 
   describe('method', () => {
-    it.each(['get', 'post', 'put', 'delete', 'options'])('%s', async (method) => {
+    it.each(['get', 'post', 'put', 'patch', 'delete', 'options', 'trace', 'head'])('%s', async (method) => {
       expect.assertions(1);
       interceptor.intercept('/', method).reply(200);
 

@@ -1,9 +1,9 @@
-import { CancelableRequest, Got, Method, OptionsOfUnknownResponseBody, Response } from 'got';
-import { Readable } from 'stream';
+import { Got, Method, OptionsInit, OptionsOfUnknownResponseBody, Request } from 'got';
 import { URL, URLSearchParams } from 'url';
 import { format } from 'util';
 import { GotFetchResponse } from './response.js';
-
+import { finished, Readable } from "node:stream";
+import { once } from "node:events";
 
 export type GotFetch = typeof fetch;
 
@@ -39,27 +39,20 @@ export function createFetch(got: Got): GotFetch {
     const searchParams = new URLSearchParams(url.searchParams);
     url.search = '';
 
-    const gotOpts: OptionsOfUnknownResponseBody = {
+    const gotOpts: OptionsInit  = {
       // url needs to be stringified to support UNIX domain sockets, and
       // For more info see https://github.com/alexghr/got-fetch/pull/8
       url: url.toString(),
       searchParams,
       followRedirect: true,
       throwHttpErrors: false,
-      method: (request.method as Method) || 'get',
-      isStream: false,
+      method: (request.method as Method) ?? 'get',
       resolveBodyOnly: false,
       // we'll do our own response parsing in `GotFetchResponse`
-      responseType: undefined
+      responseType: undefined,
     };
 
-    const { body, headers: bodyHeaders } = serializeBody(request.body);
-
-    // only set the `body` key on the options if a body is sent
-    // otherwise got crashes
-    if (body) {
-      gotOpts.body = body;
-    }
+    const { body = "", headers: bodyHeaders } = serializeBody(request.body);
 
     if (bodyHeaders || request.headers) {
       gotOpts.headers = {
@@ -74,30 +67,65 @@ export function createFetch(got: Got): GotFetch {
       gotOpts.cache = globalCache;
     }
 
-    const response = got(gotOpts) as CancelableRequest<Response<string | Buffer>>;
+    const gotReq = got({ ...gotOpts, isStream: true });
 
     if (request.signal) {
-      const abortHandler = () => response.cancel()
+      const abortHandler = () => gotReq.destroy()
       request.signal.addEventListener('abort', abortHandler);
-      response.then(() => request.signal!.removeEventListener('abort', abortHandler))
+      const cleanup = finished(gotReq, () => {
+        request.signal!.removeEventListener('abort', abortHandler);
+        cleanup();
+      })
     }
 
-    return response.then(r => {
-      return new GotFetchResponse(r.body, {
-        headers: r.headers,
-        redirected: r.redirectUrls && r.redirectUrls.length > 0,
-        status: r.statusCode,
-        statusText: r.statusMessage,
-        type: "default",
-        // according to spec this should be the final URL, after all redirects
-        url:
-          r.redirectUrls.length > 0
-              // using Array.prototype.at would've been nice but it's not
-              // supported by anything below Node 16.8
-            ? r.redirectUrls[r.redirectUrls.length - 1].href
-            : url.href,
-      });
+    try {
+      // got creates a Duplex stream of the request but it only allows Writes
+      // for certain methods. It's list of methods which accept a payload is
+      // incomplete so alwasy try to close the request and swallow any errors
+      gotReq.end(body);
+    } catch {
+      // noop
+      // I hate this
+    }
+
+    const raceController = new AbortController();
+    // wait for the first chunk to arrive so that got gives us back the status
+    // one of two things could happen: either we get back a body with a
+    // length > 0, in which case at least one 'data' event is emitted; OR
+    // we get an empty body (lenght === 0) in which case got will emit 'end'
+    const [firstChunk] = await Promise.race([
+      once(gotReq, "data", { signal: raceController.signal }),
+      once(gotReq, "end", { signal: raceController.signal }),
+    ]);
+    // cancel whoever lost
+    raceController.abort();
+
+    const response = gotReq.response!;
+    // put back the chunk we got (if any) or create an empty ReadableStream
+    const responseBody = firstChunk ? restream(firstChunk, gotReq) : Readable.from([]);
+
+    return new GotFetchResponse(responseBody, {
+      headers: response.headers,
+      redirected: response.redirectUrls && response.redirectUrls.length > 0,
+      status: response.statusCode,
+      statusText: response.statusMessage,
+      type: "default",
+      // according to spec this should be the final URL, after all redirects
+      url:
+        response.redirectUrls.length > 0
+            // using Array.prototype.at would've been nice but it's not
+            // supported by anything below Node 16.8
+          ? response.redirectUrls[response.redirectUrls.length - 1].href
+          : url.href,
     });
+  }
+}
+
+async function* restream(firstChunk: any, req: Request): any {
+  yield firstChunk;
+
+  for await (const chunk of req) {
+    yield chunk;
   }
 }
 
