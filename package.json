@@ -28,7 +28,7 @@
     "lint": "eslint .",
     "prepublish": "$npm_execpath run build",
     "pretest": "$npm_execpath run build:test",
-    "test": "NODE_OPTIONS=--experimental-vm-modules jest",
+    "test": "NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" jest",
     "pretest:watch": "$npm_execpath run build:test",
     "test:watch": "concurrently '$npm_execpath run build:test:watch' 'jest --watchAll'",
     "release": "semantic-release",
