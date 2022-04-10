@@ -5,7 +5,9 @@
  */
 
 import { IncomingHttpHeaders } from 'http2';
+import {Readable, Stream} from 'stream';
 import { format } from 'util';
+import {Body} from './body-type.js';
 
 import { GotHeaders } from './headers.js';
 
@@ -26,10 +28,15 @@ export class GotFetchResponse implements Response {
   readonly url: string;
   readonly type: ResponseType;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  /**
+   * This is a Node Readable stream
+   */
   readonly body: any | null;
 
+  #bodyUsed = false;
+
   constructor(
-    body: BodyInit | null,
+    body: Body | null,
     init?: ResponseInit | null
   ) {
     if (init && typeof init.status === 'number' && (init.status < 200 || init.status > 599)) {
@@ -49,9 +56,7 @@ export class GotFetchResponse implements Response {
   }
 
   get bodyUsed(): boolean {
-    // if it's a string or a Buffer then we've already read the full body in memory
-    // and the stream this body came from is "disturbed"
-    return typeof this.body === 'string' || Buffer.isBuffer(this.body);
+    return this.#bodyUsed
   }
 
   get ok(): boolean {
@@ -79,7 +84,9 @@ export class GotFetchResponse implements Response {
     return this.text().then(JSON.parse);
   }
 
-  text(): Promise<string> {
+  async text(): Promise<string> {
+    this.#bodyUsed = true;
+
     if (this.body === null) {
       return Promise.resolve('');
     }
@@ -89,7 +96,12 @@ export class GotFetchResponse implements Response {
     } else if (Buffer.isBuffer(this.body)) {
       return Promise.resolve(this.body.toString('utf8'));
     } else {
-      return Promise.reject(new TypeError('Unsupported body type'));
+      let body = '';
+      for await (const chunk of this.body) {
+        body += chunk;
+      }
+
+      return body;
     }
   }
 

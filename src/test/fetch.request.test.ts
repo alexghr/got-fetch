@@ -1,4 +1,5 @@
 import got from 'got';
+import {Readable} from 'stream';
 import { URLSearchParams } from 'url';
 
 import { createFetch } from '../lib/fetch.js';
@@ -12,7 +13,7 @@ describe('fetch request', () => {
   });
 
   describe('method', () => {
-    it.each(['get', 'post', 'put', 'delete', 'options'])('%s', async (method) => {
+    it.each(['get', 'post', 'put', 'patch', 'delete', 'options', 'trace', 'head'])('%s', async (method) => {
       expect.assertions(1);
       interceptor.intercept('/', method).reply(200);
 
@@ -104,16 +105,37 @@ describe('fetch request', () => {
   });
 
   describe('body', () => {
-    const tests: ReadonlyArray<[string, string | URLSearchParams | Buffer, RegExp]> = [
+    const tests: ReadonlyArray<
+      [string, string | URLSearchParams | Buffer | Readable, string, RegExp]
+    > = [
       // test name, body, expected content type
-      ['string', 'foo', /^text\/plain/],
-      ['querystring', new URLSearchParams({ foo: 'foo' }), /^application\/x-www-form-urlencoded/],
-      ['buffer', Buffer.from('foo', 'utf-8'), /^application\/octet-stream/]
+      ["string", "foo", "foo", /^text\/plain/],
+      [
+        "querystring",
+        new URLSearchParams({ foo: "foo" }),
+        "foo=foo",
+        /^application\/x-www-form-urlencoded/,
+      ],
+      [
+        "buffer",
+        Buffer.from("foo", "utf-8"),
+        "foo",
+        /^application\/octet-stream/,
+      ],
+      [
+        "stream",
+        Readable.from(["foo", "bar", "baz"]),
+        "foobarbaz",
+        /^application\/octet-stream/,
+      ],
     ];
 
-    it.each(tests)('sends %s body', async (_, body) => {
+    it.only.each(tests)('sends %s body', async (_, body, bodyMatch, contentType) => {
       expect.assertions(1);
-      interceptor.intercept('/', 'post', String(body)).reply(200);
+      interceptor
+        .intercept("/", "post", bodyMatch)
+        .matchHeader("content-type", contentType)
+        .reply(200);
 
       const fetch = createFetch(got);
       await assert200(fetch(url('/'), {

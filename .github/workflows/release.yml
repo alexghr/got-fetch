@@ -7,6 +7,7 @@ on:
       - 'next'
       - '4.x'
 
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -25,6 +26,7 @@ jobs:
     - run: yarn run test
       env:
         CI: true
+        NODE_OPTIONS: "--experimental-abortcontroller"
 
   release:
     runs-on: ubuntu-latest
