@@ -2,17 +2,25 @@ import { Got, Method, OptionsInit, OptionsOfUnknownResponseBody, Request } from 
 import { URL, URLSearchParams } from 'url';
 import { format } from 'util';
 import { GotFetchResponse } from './response.js';
-import { finished, Readable } from "node:stream";
+import { finished, Readable   } from "node:stream";
 import { once } from "node:events";
+import { Body } from "./body-type.js";
 
-export type GotFetch = typeof fetch;
+type GotFetchRequestInit = Omit<RequestInit, 'body'> & {
+  body?: Body | null;
+};
+
+export type GotFetch = (
+  input: string | (GotFetchRequestInit & { url: string }),
+  init?: GotFetchRequestInit
+) => Promise<GotFetchResponse>;
 
 export function createFetch(got: Got): GotFetch {
   const globalCache = new Map();
 
   return async (input, opts) => {
     const url = new URL(typeof input === 'string' ? input : input.url);
-    const request: RequestInit = typeof input === 'object' ? input : opts || {};
+    const request: GotFetchRequestInit = typeof input === 'object' ? input : opts || {};
 
     if (request.mode === 'no-cors' || request.mode === 'same-origin' || request.mode === 'navigate') {
       throw new TypeError(format('request.mode not supported: %s', request.mode));
@@ -39,27 +47,28 @@ export function createFetch(got: Got): GotFetch {
     const searchParams = new URLSearchParams(url.searchParams);
     url.search = '';
 
-    const gotOpts: OptionsInit  = {
+    const { body = "", headers: bodyHeaders } = serializeBody(request.body);
+
+    const gotOpts: OptionsInit = {
       // url needs to be stringified to support UNIX domain sockets, and
       // For more info see https://github.com/alexghr/got-fetch/pull/8
       url: url.toString(),
       searchParams,
       followRedirect: true,
       throwHttpErrors: false,
-      method: (request.method as Method) ?? 'get',
+      method: (request.method as Method) ?? "get",
       resolveBodyOnly: false,
       // we'll do our own response parsing in `GotFetchResponse`
       responseType: undefined,
+      allowGetBody:
+        ["GET", "HEAD"].includes(request.method?.toLowerCase() ?? "") && Boolean(body),
+      headers: {
+        ...bodyHeaders,
+        ...(request.headers as object),
+      },
     };
 
-    const { body = "", headers: bodyHeaders } = serializeBody(request.body);
-
-    if (bodyHeaders || request.headers) {
-      gotOpts.headers = {
-        ...bodyHeaders,
-        ...(request.headers as object)
-      };
-    }
+    console.log(gotOpts);
 
     // there's a bug in got where it crashes if we send both a body and cache
     // https://github.com/sindresorhus/got/issues/1021
@@ -79,10 +88,14 @@ export function createFetch(got: Got): GotFetch {
     }
 
     try {
-      // got creates a Duplex stream of the request but it only allows Writes
-      // for certain methods. It's list of methods which accept a payload is
+      // got creates a Duplex stream of the request but it only allows writing
+      // to it sometimes. It's list of methods which accept a payload is
       // incomplete so alwasy try to close the request and swallow any errors
-      gotReq.end(body);
+      if (body instanceof Readable) {
+        body.pipe(gotReq);
+      } else {
+        gotReq.end(body);
+      }
     } catch {
       // noop
       // I hate this
@@ -129,7 +142,7 @@ async function* restream(firstChunk: any, req: Request): any {
   }
 }
 
-function serializeBody(body: BodyInit | null | undefined): Pick<OptionsOfUnknownResponseBody, 'body' | 'headers'> {
+function serializeBody(body: Body | null | undefined): Pick<OptionsOfUnknownResponseBody, 'body' | 'headers'> {
   if (!body) {
     return {};
   } else if (body instanceof URLSearchParams) {
