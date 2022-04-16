@@ -1,3 +1,10 @@
+# [5.1.0-next.1](https://github.com/alexghr/got-fetch/compare/v5.0.2...v5.1.0-next.1) (2022-04-10)
+
+
+### Features
+
+* add support for response streams ([#134](https://github.com/alexghr/got-fetch/issues/134)) ([abc1732](https://github.com/alexghr/got-fetch/commit/abc1732d714c1fb178438cdc1e203afc5ec214d5)), closes [#25](https://github.com/alexghr/got-fetch/issues/25)
+
 ## [5.0.2](https://github.com/alexghr/got-fetch/compare/v5.0.1...v5.0.2) (2022-01-27)
 
 ## [5.0.1](https://github.com/alexghr/got-fetch/compare/v5.0.0...v5.0.1) (2021-12-28)
