@@ -1,3 +1,10 @@
+# [5.1.0](https://github.com/alexghr/got-fetch/compare/v5.0.2...v5.1.0) (2022-04-19)
+
+
+### Features
+
+* support streams ([4ef2b66](https://github.com/alexghr/got-fetch/commit/4ef2b669433730c64a19033998e496da6f411ae9)), closes [#25](https://github.com/alexghr/got-fetch/issues/25)
+
 # [5.1.0-next.1](https://github.com/alexghr/got-fetch/compare/v5.0.2...v5.1.0-next.1) (2022-04-10)
 
 
