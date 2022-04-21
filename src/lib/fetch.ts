@@ -1,4 +1,4 @@
-import { Got, Method, OptionsInit, OptionsOfUnknownResponseBody, Request } from 'got';
+import { Got, Method, OptionsInit, Request } from 'got';
 import { URL, URLSearchParams } from 'url';
 import { format } from 'util';
 import { GotFetchResponse } from './response.js';
@@ -65,9 +65,9 @@ export function createFetch(got: Got): GotFetch {
       responseType: undefined,
       allowGetBody: getMethodsWithBody.has(method.toUpperCase()) && Boolean(body),
       headers: {
-        ...bodyHeaders,
-        ...(request.headers as object),
-      },
+        ...normaliseHeaders(bodyHeaders ?? {}),
+        ...normaliseHeaders(request.headers ?? {})
+      }
     };
 
     // there's a bug in got where it crashes if we send both a body and cache
@@ -144,7 +144,30 @@ async function* restream(firstChunk: unknown, req: Request): AsyncGenerator<unkn
   }
 }
 
-function serializeBody(body: Body | null | undefined): Pick<OptionsOfUnknownResponseBody, 'body' | 'headers'> {
+function normaliseHeaders(headers: HeadersInit): Record<string, string | string[] | undefined> {
+  const out: Record<string, string | string[] | undefined> = {};
+
+  if (Array.isArray(headers)) {
+    headers.forEach(([header, value]) => {
+      out[header.toLowerCase()] = value;
+    });
+  } else if (typeof headers?.forEach === "function") {
+    headers.forEach((value, header) => {
+      out[header.toLowerCase()] = value;
+    });
+  } else {
+    Object.keys(headers).forEach((header) => {
+      out[header.toLowerCase()] = (headers as Record<string, string>)[header];
+    });
+  }
+
+  return out;
+}
+
+function serializeBody(body: Body | null | undefined): {
+  body?: string | Buffer | Readable;
+  headers?: Record<string, string>;
+} {
   if (!body) {
     return {};
   } else if (body instanceof URLSearchParams) {
