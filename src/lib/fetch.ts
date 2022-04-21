@@ -113,7 +113,9 @@ export function createFetch(got: Got): GotFetch {
 
     const response = gotReq.response!;
     // put back the chunk we got (if any) or create an empty ReadableStream
-    const responseBody = firstChunk ? restream(firstChunk, gotReq) : Readable.from([]);
+    const responseBody = Readable.from(
+      firstChunk ? restream(firstChunk, gotReq) : []
+    );
 
     return new GotFetchResponse(responseBody, {
       headers: response.headers,
@@ -132,7 +134,7 @@ export function createFetch(got: Got): GotFetch {
   }
 }
 
-async function* restream(firstChunk: any, req: Request): any {
+async function* restream(firstChunk: unknown, req: Request): AsyncGenerator<unknown> {
   yield firstChunk;
 
   for await (const chunk of req) {
