@@ -1,4 +1,4 @@
-import { Got, Method, OptionsInit, OptionsOfUnknownResponseBody, Request } from 'got';
+import { Got, Method, OptionsInit, Request } from 'got';
 import { URL, URLSearchParams } from 'url';
 import { format } from 'util';
 import { GotFetchResponse } from './response.js';
@@ -14,6 +14,8 @@ export type GotFetch = (
   input: string | (GotFetchRequestInit & { url: string }),
   init?: GotFetchRequestInit
 ) => Promise<GotFetchResponse>;
+
+const getMethodsWithBody = new Set(["GET", "HEAD"]);
 
 export function createFetch(got: Got): GotFetch {
   const globalCache = new Map();
@@ -49,6 +51,7 @@ export function createFetch(got: Got): GotFetch {
 
     const { body = "", headers: bodyHeaders } = serializeBody(request.body);
 
+    const method: OptionsInit["method"] = (request.method as Method) ?? "GET";
     const gotOpts: OptionsInit = {
       // url needs to be stringified to support UNIX domain sockets, and
       // For more info see https://github.com/alexghr/got-fetch/pull/8
@@ -56,19 +59,16 @@ export function createFetch(got: Got): GotFetch {
       searchParams,
       followRedirect: true,
       throwHttpErrors: false,
-      method: (request.method as Method) ?? "get",
+      method,
       resolveBodyOnly: false,
       // we'll do our own response parsing in `GotFetchResponse`
       responseType: undefined,
-      allowGetBody:
-        ["GET", "HEAD"].includes(request.method?.toLowerCase() ?? "") && Boolean(body),
+      allowGetBody: getMethodsWithBody.has(method.toUpperCase()) && Boolean(body),
       headers: {
-        ...bodyHeaders,
-        ...(request.headers as object),
-      },
+        ...normaliseHeaders(bodyHeaders ?? {}),
+        ...normaliseHeaders(request.headers ?? {})
+      }
     };
-
-    console.log(gotOpts);
 
     // there's a bug in got where it crashes if we send both a body and cache
     // https://github.com/sindresorhus/got/issues/1021
@@ -115,7 +115,9 @@ export function createFetch(got: Got): GotFetch {
 
     const response = gotReq.response!;
     // put back the chunk we got (if any) or create an empty ReadableStream
-    const responseBody = firstChunk ? restream(firstChunk, gotReq) : Readable.from([]);
+    const responseBody = Readable.from(
+      firstChunk ? restream(firstChunk, gotReq) : []
+    );
 
     return new GotFetchResponse(responseBody, {
       headers: response.headers,
@@ -134,7 +136,7 @@ export function createFetch(got: Got): GotFetch {
   }
 }
 
-async function* restream(firstChunk: any, req: Request): any {
+async function* restream(firstChunk: unknown, req: Request): AsyncGenerator<unknown> {
   yield firstChunk;
 
   for await (const chunk of req) {
@@ -142,7 +144,30 @@ async function* restream(firstChunk: any, req: Request): any {
   }
 }
 
-function serializeBody(body: Body | null | undefined): Pick<OptionsOfUnknownResponseBody, 'body' | 'headers'> {
+function normaliseHeaders(headers: HeadersInit): Record<string, string | string[] | undefined> {
+  const out: Record<string, string | string[] | undefined> = {};
+
+  if (Array.isArray(headers)) {
+    headers.forEach(([header, value]) => {
+      out[header.toLowerCase()] = value;
+    });
+  } else if (typeof headers?.forEach === "function") {
+    headers.forEach((value, header) => {
+      out[header.toLowerCase()] = value;
+    });
+  } else {
+    Object.keys(headers).forEach((header) => {
+      out[header.toLowerCase()] = (headers as Record<string, string>)[header];
+    });
+  }
+
+  return out;
+}
+
+function serializeBody(body: Body | null | undefined): {
+  body?: string | Buffer | Readable;
+  headers?: Record<string, string>;
+} {
   if (!body) {
     return {};
   } else if (body instanceof URLSearchParams) {
