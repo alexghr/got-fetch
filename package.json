@@ -1,6 +1,6 @@
 {
   "name": "got-fetch",
-  "version": "5.1.0",
+  "version": "5.1.1",
   "type": "module",
   "license": "MIT",
   "description": "A fetch-compatible interface to the got HTTP client",

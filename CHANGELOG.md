@@ -1,3 +1,10 @@
+## [5.1.1](https://github.com/alexghr/got-fetch/compare/v5.1.0...v5.1.1) (2022-04-21)
+
+
+### Bug Fixes
+
+* normalise headers before sending request ([#147](https://github.com/alexghr/got-fetch/issues/147)) ([015cd2b](https://github.com/alexghr/got-fetch/commit/015cd2b0404706f0b23333d1df98aaa0ec72f8a4)), closes [#12](https://github.com/alexghr/got-fetch/issues/12)
+
 # [5.1.0](https://github.com/alexghr/got-fetch/compare/v5.0.2...v5.1.0) (2022-04-19)
 
 
