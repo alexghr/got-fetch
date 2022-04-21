@@ -68,8 +68,6 @@ export function createFetch(got: Got): GotFetch {
       },
     };
 
-    console.log(gotOpts);
-
     // there's a bug in got where it crashes if we send both a body and cache
     // https://github.com/sindresorhus/got/issues/1021
     if ((typeof request.cache === 'undefined' || request.cache === 'default') && !gotOpts.body) {
