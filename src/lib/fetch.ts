@@ -15,6 +15,8 @@ export type GotFetch = (
   init?: GotFetchRequestInit
 ) => Promise<GotFetchResponse>;
 
+const getMethodsWithBody = new Set(["GET", "HEAD"]);
+
 export function createFetch(got: Got): GotFetch {
   const globalCache = new Map();
 
@@ -49,6 +51,7 @@ export function createFetch(got: Got): GotFetch {
 
     const { body = "", headers: bodyHeaders } = serializeBody(request.body);
 
+    const method: OptionsInit["method"] = (request.method as Method) ?? "GET";
     const gotOpts: OptionsInit = {
       // url needs to be stringified to support UNIX domain sockets, and
       // For more info see https://github.com/alexghr/got-fetch/pull/8
@@ -56,12 +59,11 @@ export function createFetch(got: Got): GotFetch {
       searchParams,
       followRedirect: true,
       throwHttpErrors: false,
-      method: (request.method as Method) ?? "get",
+      method,
       resolveBodyOnly: false,
       // we'll do our own response parsing in `GotFetchResponse`
       responseType: undefined,
-      allowGetBody:
-        ["GET", "HEAD"].includes(request.method?.toLowerCase() ?? "") && Boolean(body),
+      allowGetBody: getMethodsWithBody.has(method.toUpperCase()) && Boolean(body),
       headers: {
         ...bodyHeaders,
         ...(request.headers as object),
