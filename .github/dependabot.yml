@@ -7,4 +7,6 @@ updates:
     commit-message:
       prefix: "build(deps)"
       prefix-development: "build(dev)"
+    labels:
+      - "automerge"
 
