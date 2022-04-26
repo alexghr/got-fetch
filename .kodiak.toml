@@ -1,4 +1,8 @@
 # .kodiak.toml
 # Minimal config. version is the only required field.
 version = 1
+merge.automerge_label = "automerge"
+merge.require_automerge_label = true
+merge.delete_branch_on_merge = true
+merge.method = "rebase"
 
