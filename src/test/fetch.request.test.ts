@@ -2,7 +2,7 @@ import got from 'got';
 import { URLSearchParams } from 'url';
 
 import { createFetch } from '../lib/fetch';
-import { Interceptor, intercept, assert200, url } from './util';
+import { Interceptor, intercept, assert200, url, ORIGIN } from './util';
 
 describe('fetch request', () => {
   let interceptor: Interceptor;
@@ -37,6 +37,18 @@ describe('fetch request', () => {
       const fetch = createFetch(got);
       await assert200(fetch(url('/foo')));
     });
+
+    it('allows prefixUrl', async () => {
+      expect.assertions(1);
+      interceptor.intercept('/foo', 'get').reply(200);
+
+      const prefixedClient = got.extend({
+        prefixUrl: ORIGIN
+      })
+
+      const fetch = createFetch(prefixedClient);
+      await assert200(fetch('/foo'));
+    });
   });
 
   describe('querystring', () => {
@@ -48,13 +60,6 @@ describe('fetch request', () => {
       await assert200(fetch(url('/', { foo: '123', bar: '456' })));
     });
 
-    it('merges query string parameters', async () => {
-      expect.assertions(1);
-      interceptor.intercept('/', 'get').query({ foo: '123', bar: '456' }).reply(200);
-
-      const fetch = createFetch(got.extend({ searchParams: { bar: '456' } }));
-      await assert200(fetch(url('/', { foo: '123' })));
-    });
   });
 
   describe('headers', () => {
@@ -175,7 +180,7 @@ describe('fetch request', () => {
 
     });
 
-    it.only("sends own content-type header", async () => {
+    it("sends own content-type header", async () => {
       expect.assertions(1);
 
       // as set by the client

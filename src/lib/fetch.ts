@@ -11,7 +11,16 @@ export function createFetch(got: Got): GotFetch {
   const globalCache = new Map();
 
   return async (input, opts) => {
-    const url = new URL(typeof input === 'string' ? input : input.url);
+    let url = input.toString();
+    try {
+      url = new URL(typeof input === 'string' ? input : input.url).toString();
+    } catch (e) {
+      // Ignore url parsing failure, likely prefixUrl is being used
+      // When using prefixUrl, the path cannot start with a "/"
+      if (url.startsWith("/")) {
+        url = url.substring(1);
+      }
+    }
     const request: RequestInit = typeof input === 'object' ? input : opts || {};
 
     if (request.mode === 'no-cors' || request.mode === 'same-origin' || request.mode === 'navigate') {
@@ -31,19 +40,10 @@ export function createFetch(got: Got): GotFetch {
       throw new TypeError(format('request.headers must be plain object: %j', request.headers));
     }
 
-    // got does not merge base searchParams with the url's searchParams
-    // but it does merge searchParams options
-    // so we clone the url's searchParams
-    // we also clear the url's search to work around this bug
-    // https://github.com/sindresorhus/got/issues/1188
-    const searchParams = new URLSearchParams(url.searchParams);
-    url.search = '';
-
     const gotOpts: GotOptions = {
       // url needs to be stringified to support UNIX domain sockets, and
       // For more info see https://github.com/alexghr/got-fetch/pull/8
-      url: url.toString(),
-      searchParams,
+      url,
       followRedirect: true,
       throwHttpErrors: false,
       method: (request.method as Method) || 'get',
@@ -107,7 +107,7 @@ export function createFetch(got: Got): GotFetch {
               // using Array.prototype.at would've been nice but it's not
               // supported by anything below Node 16.8
             ? r.redirectUrls[r.redirectUrls.length - 1]
-            : url.href,
+            : r.url,
       });
     });
   }
