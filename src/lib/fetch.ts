@@ -12,13 +12,30 @@ export function createFetch(got: Got): GotFetch {
 
   return async (input, opts) => {
     let url = input.toString();
+    let searchParams: URLSearchParams = new URLSearchParams();
+    
     try {
-      url = new URL(typeof input === 'string' ? input : input.url).toString();
+      const urlObj = new URL(
+        typeof input === "string"
+          ? input
+          : input.url
+      );
+
+      searchParams = new URLSearchParams(urlObj.searchParams);
+      urlObj.search = "";
+
+      url = urlObj.href;
     } catch (e) {
       // Ignore url parsing failure, likely prefixUrl is being used
       // When using prefixUrl, the path cannot start with a "/"
       if (url.startsWith("/")) {
         url = url.substring(1);
+      }
+
+      if (url.includes("?")) {
+        const [path, search] = url.split("?");
+        url = path;
+        searchParams = new URLSearchParams(search);
       }
     }
     const request: RequestInit = typeof input === 'object' ? input : opts || {};
