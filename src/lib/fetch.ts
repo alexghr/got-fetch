@@ -13,7 +13,7 @@ export function createFetch(got: Got): GotFetch {
   return async (input, opts) => {
     let url = input.toString();
     let searchParams: URLSearchParams = new URLSearchParams();
-    
+
     try {
       const urlObj = new URL(
         typeof input === "string"
@@ -61,6 +61,7 @@ export function createFetch(got: Got): GotFetch {
       // url needs to be stringified to support UNIX domain sockets, and
       // For more info see https://github.com/alexghr/got-fetch/pull/8
       url,
+      searchParams,
       followRedirect: true,
       throwHttpErrors: false,
       method: (request.method as Method) || 'get',

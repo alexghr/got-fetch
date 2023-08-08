@@ -62,6 +62,27 @@ describe('fetch request', () => {
 
   });
 
+  it('merges query string parameters', async () => {
+    expect.assertions(1);
+    interceptor.intercept('/', 'get').query({ foo: '123', bar: '456' }).reply(200);
+
+    const fetch = createFetch(got.extend({ searchParams: { bar: '456' } }));
+    await assert200(fetch(url('/', { foo: '123' })));
+  });
+
+  it('merges query string parameters with prefixUrl', async () => {
+    expect.assertions(1);
+    interceptor.intercept('/foo', 'get').query({ foo: '123', bar: '456' }).reply(200);
+
+    const prefixedClient = got.extend({
+      prefixUrl: ORIGIN,
+      searchParams: { bar: '456' }
+    })
+
+    const fetch = createFetch(prefixedClient);
+    await assert200(fetch('/foo?foo=123'));
+  });
+
   describe('headers', () => {
     it('sends headers', async () => {
       expect.assertions(1);
