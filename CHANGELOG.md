@@ -1,3 +1,5 @@
+## [5.1.8](https://github.com/alexghr/got-fetch/compare/v5.1.7...v5.1.8) (2024-02-22)
+
 ## [5.1.7](https://github.com/alexghr/got-fetch/compare/v5.1.6...v5.1.7) (2023-10-17)
 
 ## [5.1.6](https://github.com/alexghr/got-fetch/compare/v5.1.5...v5.1.6) (2023-07-18)
