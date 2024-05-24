@@ -5,7 +5,6 @@
  */
 
 import { IncomingHttpHeaders } from 'http2';
-import {Readable, Stream} from 'stream';
 import { format } from 'util';
 import {Body} from './body-type.js';
 
