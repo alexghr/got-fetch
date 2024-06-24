@@ -1,3 +1,15 @@
+## [5.1.10](https://github.com/alexghr/got-fetch/compare/v5.1.9...v5.1.10) (2024-06-16)
+
+## [5.1.9](https://github.com/alexghr/got-fetch/compare/v5.1.8...v5.1.9) (2024-04-10)
+
+## [5.1.8](https://github.com/alexghr/got-fetch/compare/v5.1.7...v5.1.8) (2024-02-22)
+
+## [5.1.7](https://github.com/alexghr/got-fetch/compare/v5.1.6...v5.1.7) (2023-10-17)
+
+## [5.1.6](https://github.com/alexghr/got-fetch/compare/v5.1.5...v5.1.6) (2023-07-18)
+
+## [5.1.5](https://github.com/alexghr/got-fetch/compare/v5.1.4...v5.1.5) (2023-07-11)
+
 ## [5.1.4](https://github.com/alexghr/got-fetch/compare/v5.1.3...v5.1.4) (2023-02-03)
 
 ## [5.1.3](https://github.com/alexghr/got-fetch/compare/v5.1.2...v5.1.3) (2023-01-02)
