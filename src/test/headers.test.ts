@@ -78,4 +78,15 @@ describe('GotHeaders', () => {
       expect(fn).not.toHaveBeenCalled();
     });
   });
+
+  describe('getSetCookie', () => {
+    it('should return set-cookie cookies', () => {
+      const headers = new GotHeaders();
+
+      headers.append('set-cookie', 'name1=value1');
+      headers.append('set-cookie', 'name2=value2');
+
+      expect(headers.getSetCookie()).toEqual(['name1=value1', 'name2=value2']);
+    });
+  });
 });

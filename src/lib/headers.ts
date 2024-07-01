@@ -18,6 +18,11 @@ export class GotHeaders implements Headers {
     this.guard = guard;
     this.headers = new Map(init);
   }
+  getSetCookie(): string[] {
+    return this.headers.has('set-cookie')
+      ? this.headers.get('set-cookie')
+      : [];
+  }
 
   private checkGuard() {
     if (this.guard === 'immutable') {
