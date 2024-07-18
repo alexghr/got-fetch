@@ -108,7 +108,7 @@ describe('fetch request', () => {
     const tests: ReadonlyArray<
       [string, string | URLSearchParams | Buffer | Readable, string, RegExp]
     > = [
-      // test name, body, expected content type
+      // test name, body, expected body, expected content type
       ["string", "foo", "foo", /^text\/plain/],
       [
         "querystring",
@@ -130,7 +130,7 @@ describe('fetch request', () => {
       ],
     ];
 
-    it.only.each(tests)('sends %s body', async (_, body, bodyMatch, contentType) => {
+    it.each(tests)('sends %s body', async (_, body, bodyMatch, contentType) => {
       expect.assertions(1);
       interceptor
         .intercept("/", "post", bodyMatch)
@@ -144,11 +144,11 @@ describe('fetch request', () => {
       }));
     });
 
-    it.each(tests)('sends content-type header', async (_, body, expectedContentType) => {
+    it.each(tests)('sends content-type header', async (_, body, _1, expectedContentType) => {
       expect.assertions(1);
       interceptor
-        .intercept('/', 'post')
-        .matchHeader('Content-Type', expectedContentType)
+        .intercept("/", "post")
+        .matchHeader("content-type", expectedContentType)
         .reply(200);
 
       const fetch = createFetch(got);
