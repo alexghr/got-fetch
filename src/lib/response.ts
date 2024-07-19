@@ -75,7 +75,7 @@ export class GotFetchResponse implements Response {
   }
 
   formData(): Promise<FormData> {
-    return this.text().then(body => new URLSearchParams(body));
+    return this.text().then(body => new URLSearchParams(body) as unknown as FormData);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
