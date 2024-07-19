@@ -1,3 +1,20 @@
+# [6.0.0](https://github.com/alexghr/got-fetch/compare/v5.1.10...v6.0.0) (2024-07-19)
+
+
+### Bug Fixes
+
+* tests ([b5268c8](https://github.com/alexghr/got-fetch/commit/b5268c8d677a6cd1b31c85e86db7db1de60116e9))
+
+
+### Features
+
+* **core:** support got 14 ([#433](https://github.com/alexghr/got-fetch/issues/433)) ([05cb11a](https://github.com/alexghr/got-fetch/commit/05cb11a72323d46937787e038065bb439fcb4f77))
+
+
+### BREAKING CHANGES
+
+* **core:** new got version, new minimum node version
+
 ## [5.1.10](https://github.com/alexghr/got-fetch/compare/v5.1.9...v5.1.10) (2024-06-16)
 
 ## [5.1.9](https://github.com/alexghr/got-fetch/compare/v5.1.8...v5.1.9) (2024-04-10)
