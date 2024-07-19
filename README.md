@@ -12,6 +12,12 @@ fetch stuff over HTTP 😉
 Why would you use this instead of got? Sometimes you might need a fetch
 wrapper and this is it (e.g. [Apollo uses `fetch` to query remote schemas]).
 
+## Before you install
+
+If you're using on NodeJS v18 or greater than you should be using its global fetch. It's better integrated, better supported and has more features. 
+
+[Native fetch](https://nodejs.org/dist/latest-v18.x/docs/api/globals.html#fetch)
+
 ## Install
 
 Support table:
