@@ -1,7 +1,7 @@
 import nock from 'nock';
 import { URL } from 'url';
 
-const ORIGIN = 'https://example.com';
+export const ORIGIN = 'https://example.com';
 
 export type Interceptor = nock.Scope;
 export function intercept(): Interceptor {
