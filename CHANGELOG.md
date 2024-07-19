@@ -1,3 +1,10 @@
+## [4.0.5](https://github.com/alexghr/got-fetch/compare/v4.0.4...v4.0.5) (2024-07-19)
+
+
+### Bug Fixes
+
+* Allow prefixUrl to work ([#370](https://github.com/alexghr/got-fetch/issues/370)) ([c27a53a](https://github.com/alexghr/got-fetch/commit/c27a53aba8428bf549bdb8c799e97312417a3850))
+
 ## [4.0.4](https://github.com/alexghr/got-fetch/compare/v4.0.3...v4.0.4) (2022-04-07)
 
 
