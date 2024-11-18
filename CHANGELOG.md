@@ -1,3 +1,5 @@
+## [6.0.2](https://github.com/alexghr/got-fetch/compare/v6.0.1...v6.0.2) (2024-11-18)
+
 ## [6.0.1](https://github.com/alexghr/got-fetch/compare/v6.0.0...v6.0.1) (2024-08-26)
 
 # [6.0.0](https://github.com/alexghr/got-fetch/compare/v5.1.10...v6.0.0) (2024-07-19)
