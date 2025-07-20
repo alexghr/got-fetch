@@ -1,3 +1,7 @@
+> [!IMPORTANT]
+> Package has been deprecated. Please use the built-in fetch in Nodejs.
+> 
+
 # got-fetch
 
 [![NPM](https://img.shields.io/npm/l/got-fetch)](https://github.com/alexghr/got-fetch/blob/main/LICENSE)
